@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vaan.One — Copy Trading · Profit Sharing from 50:50 · 10–20% Monthly Returns</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink:   { 950:'#04060b', 900:'#080b13', 850:'#0c101a', 800:'#121826', 700:'#1b2334' },
+        gold:  { 200:'#ffedb8', 300:'#ffe29a', 400:'#f5c96b', 500:'#e0a63c', 600:'#c4861f', 700:'#96660f' },
+      },
+      fontFamily: {
+        display: ['"Space Grotesk"','sans-serif'],
+        body: ['Inter','sans-serif'],
+      },
+    }
+  }
+}
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  html { scroll-padding-top: 90px; }
+  body { font-family:'Inter',sans-serif; background:#04060b; color:#e5e7eb; overflow-x:hidden; }
+
+  body .text-gray-600 { color:#9aa4b2; }
+  body .text-gray-500 { color:#aeb8c6; }
+  body .text-gray-400 { color:#c3ccd9; }
+  input::placeholder, textarea::placeholder { color:#8a93a5; }
+
+  .grain{ position:fixed; inset:0; z-index:5; pointer-events:none; opacity:.03;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  .text-gold-grad{
+    background:linear-gradient(100deg,#b8861f 0%,#e0a63c 25%,#ffedb8 50%,#e0a63c 75%,#b8861f 100%);
+    background-size:200% auto; -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:shimmer 7s linear infinite;
+  }
+  @keyframes shimmer{ to{ background-position:200% center; } }
+
+  .text-ygreen{ color:#9acd32; }
+  .text-red-accent{ color:#FF0000; }
+
+  .hero-bg{
+    background:
+      radial-gradient(55% 45% at 50% 0%, rgba(224,166,60,.16), transparent 70%),
+      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size:100% 100%, 46px 46px, 46px 46px;
+    -webkit-mask-image:linear-gradient(#000 65%, transparent);
+            mask-image:linear-gradient(#000 65%, transparent);
+  }
+  .blob{ position:absolute; border-radius:9999px; filter:blur(90px); pointer-events:none; }
+  @keyframes floaty{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-22px) } }
+  .animate-floaty{ animation:floaty 9s ease-in-out infinite; }
+
+  .glass{ background:rgba(255,255,255,.03); backdrop-filter:blur(14px); border:1px solid rgba(255,255,255,.08); }
+  .glass-gold{ border-color:rgba(224,166,60,.25); }
+  .lift{ transition:transform .35s cubic-bezier(.16,1,.3,1), border-color .35s, box-shadow .35s; }
+  .lift:hover{ transform:translateY(-6px); border-color:rgba(224,166,60,.5); box-shadow:0 20px 50px -20px rgba(224,166,60,.25); }
+
+  .btn-gold{ position:relative; overflow:hidden;
+    background:linear-gradient(135deg,#ffe29a 0%,#e0a63c 45%,#b47c17 100%);
+    color:#1a1204; box-shadow:0 10px 30px -8px rgba(224,166,60,.5), inset 0 1px 0 rgba(255,255,255,.5); }
+  .btn-gold::after{ content:''; position:absolute; top:0; left:-160%; width:55%; height:100%;
+    background:linear-gradient(115deg,transparent,rgba(255,255,255,.65),transparent);
+    transform:skewX(-20deg); transition:left .7s ease; }
+  .btn-gold:hover::after{ left:140%; }
+  .btn-gold:hover{ filter:brightness(1.08); }
+
+  .reveal-init{ opacity:0; transform:translateY(30px); transition:opacity .8s ease, transform .9s cubic-bezier(.16,1,.3,1); }
+  .reveal-init.in-view{ opacity:1; transform:none; }
+
+  .eq-line{ stroke-dasharray:1000; }
+  .eq-area{ opacity:1; }
+  .reveal-init .eq-line{ stroke-dashoffset:1000; transition:stroke-dashoffset 2.4s cubic-bezier(.4,0,.2,1) .2s; }
+  .reveal-init.in-view .eq-line{ stroke-dashoffset:0; }
+  .reveal-init .eq-area{ opacity:0; transition:opacity 1.2s ease 1.1s; }
+  .reveal-init.in-view .eq-area{ opacity:1; }
+
+  .faq-body{ overflow:hidden; transition:max-height .4s cubic-bezier(.4,0,.2,1); }
+  .faq-icon{ transition:transform .3s ease; }
+  .faq-item.open{ border-color:rgba(224,166,60,.45); }
+
+  .modal-card{ animation:pop .35s cubic-bezier(.16,1,.3,1); }
+  @keyframes pop{ from{ opacity:0; transform:scale(.94) translateY(14px);} to{ opacity:1; transform:none;} }
+  .field{ background:#0a0e18; border:1px solid rgba(255,255,255,.09); transition:border-color .25s, box-shadow .25s; }
+  .field:focus{ outline:none; border-color:rgba(224,166,60,.7); box-shadow:0 0 0 3px rgba(224,166,60,.15); }
+
+  ::selection{ background:#e0a63c; color:#04060b; }
+  ::-webkit-scrollbar{ width:9px } ::-webkit-scrollbar-track{ background:#04060b }
+  ::-webkit-scrollbar-thumb{ background:#232c40; border-radius:8px } ::-webkit-scrollbar-thumb:hover{ background:#e0a63c }
+</style>
+</head>
+
+<body class="font-body antialiased">
+<div class="grain"></div>
+
+<!-- ==================== NAV ==================== -->
+<header id="navbar" class="sticky top-0 z-40 transition-all duration-300 border-b border-transparent">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[76px] flex items-center justify-between">
+    <a href="#" class="flex items-center gap-3 group">
+      <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-200 via-gold-500 to-gold-700 flex items-center justify-center font-display font-bold text-lg text-ink-950 shadow-lg shadow-gold-500/30 group-hover:rotate-6 transition-transform duration-300">V</span>
+      <span class="font-display text-xl font-bold tracking-wide text-white">Vaan<span class="text-gold-grad">.One</span></span>
+    </a>
+
+    <nav class="hidden md:flex items-center gap-9 text-sm font-medium text-gray-400">
+      <a href="#how" class="hover:text-gold-400 transition-colors">How It Works</a>
+      <a href="#profit" class="hover:text-gold-400 transition-colors">Profit Sharing</a>
+      <a href="#performance" class="hover:text-gold-400 transition-colors">Performance</a>
+      <a href="#testimonials" class="hover:text-gold-400 transition-colors">Reviews</a>
+      <a href="#faq" class="hover:text-gold-400 transition-colors">FAQ</a>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <button onclick="openRegister()" class="hidden sm:inline-flex btn-gold items-center gap-2 font-bold px-5 py-2.5 rounded-xl text-sm transition-all hover:-translate-y-0.5">
+        Register for Copy Trade <i class="fa-solid fa-arrow-right text-xs"></i>
+      </button>
+      <button class="md:hidden w-10 h-10 rounded-xl glass flex items-center justify-center text-gray-300" onclick="toggleMobileMenu()" aria-label="Menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobileMenu" class="hidden md:hidden bg-ink-900/95 backdrop-blur-xl border-b border-white/10 px-6 py-6 space-y-4">
+    <a href="#how" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-gold-400 font-medium">How It Works</a>
+    <a href="#profit" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-gold-400 font-medium">Profit Sharing</a>
+    <a href="#performance" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-gold-400 font-medium">Performance</a>
+    <a href="#testimonials" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-gold-400 font-medium">Reviews</a>
+    <a href="#faq" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-gold-400 font-medium">FAQ</a>
+    <button onclick="toggleMobileMenu();openRegister()" class="btn-gold w-full text-center font-bold py-3 rounded-xl text-sm">Register for Copy Trade</button>
+  </div>
+</header>
+
+<!-- ==================== HERO ==================== -->
+<section class="relative hero-bg pt-16 pb-20 overflow-hidden">
+  <div class="blob w-[420px] h-[420px] bg-gold-500/15 -top-32 -left-32 animate-floaty"></div>
+  <div class="blob w-[380px] h-[380px] bg-amber-700/10 top-40 -right-40 animate-floaty" style="animation-delay:-4s"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="text-center max-w-4xl mx-auto reveal">
+      <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass glass-gold text-gold-400 text-[11px] font-bold mb-7 uppercase tracking-[0.2em]">
+        <i class="fa-solid fa-handshake"></i> Copy Trading · Profit Sharing from 50:50
+      </div>
+
+      <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08] text-white">
+        <span class="text-red-accent">Stop Trading Alone.</span> Let Experts
+        <span class="block text-gold-grad mt-2">Trade Gold For You</span>
+      </h1>
+
+      <p class="text-lg sm:text-xl text-gray-400 mt-7 max-w-2xl mx-auto leading-relaxed font-light">
+        Vaan.One Copy Trading mirrors our professional XAUUSD trades straight onto your MT5 account.
+        Target returns of <span class="text-ygreen font-semibold">10–20% monthly</span> — profit sharing starts from
+        <span class="text-gold-300 font-semibold">50:50</span>, and profits are shared
+        <span class="text-ygreen font-semibold">only when your profit reaches a minimum of 10%</span>.
+        No experience, no upfront fees.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
+        <button onclick="openRegister()" class="btn-gold w-full sm:w-auto font-bold px-8 py-4 rounded-xl text-base transition-all hover:-translate-y-0.5 flex items-center justify-center gap-3">
+          <i class="fa-solid fa-copy"></i> Register for Copy Trade
+        </button>
+        <a href="#how" class="w-full sm:w-auto glass glass-gold font-bold px-8 py-4 rounded-xl text-base text-gold-300 transition-all hover:-translate-y-0.5 flex items-center justify-center gap-3 hover:border-gold-500/50">
+          <i class="fa-solid fa-play text-xs"></i> See How It Works
+        </a>
+      </div>
+
+      <div class="mt-14 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="glass rounded-2xl px-5 py-4 text-left lift"><div class="font-display font-bold text-xl text-ygreen">10–20%</div><div class="text-[11px] text-gray-500 font-medium mt-0.5 uppercase tracking-wider">Monthly Target Returns</div></div>
+        <div class="glass rounded-2xl px-5 py-4 text-left lift"><div class="font-display font-bold text-xl text-ygreen">50:50</div><div class="text-[11px] text-gray-500 font-medium mt-0.5 uppercase tracking-wider">Profit Sharing Starts From</div></div>
+        <div class="glass rounded-2xl px-5 py-4 text-left lift"><div class="font-display font-bold text-xl text-ygreen">10%</div><div class="text-[11px] text-gray-500 font-medium mt-0.5 uppercase tracking-wider">Min. Profit to Share</div></div>
+        <div class="glass rounded-2xl px-5 py-4 text-left lift"><div class="font-display font-bold text-xl text-ygreen">$0</div><div class="text-[11px] text-gray-500 font-medium mt-0.5 uppercase tracking-wider">Upfront / Monthly Fees</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== HOW IT WORKS ==================== -->
+<section id="how" class="py-24 lg:py-32 relative">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+      <span class="text-[11px] uppercase tracking-[0.25em] text-gold-400 font-bold">Effortless From Day One</span>
+      <h2 class="font-display text-3xl sm:text-5xl font-bold text-white mt-4">How <span class="text-gold-grad">Copy Trading</span> Works</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="glass lift rounded-3xl p-8 reveal">
+        <div class="flex items-center justify-between mb-6">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500/25 to-gold-700/10 border border-gold-500/30 flex items-center justify-center text-gold-400 text-xl shadow-inner"><i class="fa-solid fa-user-plus"></i></div>
+          <span class="font-display text-4xl font-bold text-white/10">01</span>
+        </div>
+        <h3 class="font-display text-xl font-bold text-white mb-3">Register Your Details</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Fill in the copy trade registration form with your name, email and MT5 account number. It takes less than a minute.</p>
+      </div>
+      <div class="glass lift rounded-3xl p-8 reveal" style="transition-delay:.1s">
+        <div class="flex items-center justify-between mb-6">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500/25 to-gold-700/10 border border-gold-500/30 flex items-center justify-center text-gold-400 text-xl shadow-inner"><i class="fa-solid fa-plug-circle-bolt"></i></div>
+          <span class="font-display text-4xl font-bold text-white/10">02</span>
+        </div>
+        <h3 class="font-display text-xl font-bold text-white mb-3">Connect Your MT5 Account</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">We send you simple connection instructions. <span class="text-ygreen font-semibold">Your funds never leave your own broker account</span> — full control stays with you.</p>
+      </div>
+      <div class="glass lift rounded-3xl p-8 reveal" style="transition-delay:.2s">
+        <div class="flex items-center justify-between mb-6">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500/25 to-gold-700/10 border border-gold-500/30 flex items-center justify-center text-gold-400 text-xl shadow-inner"><i class="fa-solid fa-robot"></i></div>
+          <span class="font-display text-4xl font-bold text-white/10">03</span>
+        </div>
+        <h3 class="font-display text-xl font-bold text-white mb-3">Our Experts Trade</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Professional traders execute proven XAUUSD strategies targeting <span class="text-ygreen font-semibold">10–20% monthly returns</span> — every trade mirrors onto your account automatically.</p>
+      </div>
+      <div class="glass lift rounded-3xl p-8 reveal" style="transition-delay:.3s">
+        <div class="flex items-center justify-between mb-6">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500/25 to-gold-700/10 border border-gold-500/30 flex items-center justify-center text-gold-400 text-xl shadow-inner"><i class="fa-solid fa-handshake"></i></div>
+          <span class="font-display text-4xl font-bold text-white/10">04</span>
+        </div>
+        <h3 class="font-display text-xl font-bold text-white mb-3">Share Profits 50:50</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Profits are split 50:50 — but <span class="text-gold-300 font-semibold">only once your profit reaches a minimum of 10%</span> in the cycle. <span class="text-ygreen font-semibold">Below 10%? You keep 100%.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PROFIT SHARING ==================== -->
+<section id="profit" class="py-24 lg:py-32 border-t border-white/5 bg-ink-900/40">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="glass glass-gold rounded-[2rem] p-8 sm:p-12 lg:p-14 relative overflow-hidden reveal">
+      <div class="blob w-96 h-96 bg-gold-500/10 -right-24 -bottom-24"></div>
+
+      <div class="text-center max-w-2xl mx-auto mb-12 relative">
+        <span class="text-[11px] uppercase tracking-[0.25em] text-gold-400 font-bold">Fair &amp; Transparent</span>
+        <h2 class="font-display text-3xl sm:text-5xl font-bold text-white mt-4">Profit Sharing Starts from <span class="text-gold-grad">50:50</span></h2>
+        <p class="text-gray-500 mt-4 text-sm">No license fees. No subscriptions. No management charges. And profit is shared <span class="text-gold-300 font-semibold">only when your profit reaches a minimum of 10%</span> in the cycle — below that, you keep everything.</p>
+      </div>
+
+      <!-- 10% threshold rule banner -->
+      <div class="relative mb-8 rounded-2xl border border-gold-500/40 bg-gradient-to-r from-gold-500/10 via-gold-500/5 to-transparent p-6 flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-200 via-gold-500 to-gold-700 flex items-center justify-center text-ink-950 text-xl shadow-lg shadow-gold-500/30 flex-shrink-0"><i class="fa-solid fa-lock"></i></div>
+        <div>
+          <h3 class="font-display text-lg font-bold text-white">The 10% Minimum Profit Rule</h3>
+          <p class="text-gray-400 text-sm mt-1 leading-relaxed">Profit sharing applies <span class="text-gold-300 font-semibold">only if your account profit reaches at least 10%</span> in a monthly cycle. If your profit is below 10%, <span class="text-ygreen font-semibold">you keep 100% of it — we take nothing</span>.</p>
+        </div>
+      </div>
+
+      <!-- 50:50 visual split -->
+      <div class="relative mb-10">
+        <div class="h-16 sm:h-20 rounded-2xl overflow-hidden flex border border-white/10 shadow-2xl shadow-gold-500/10">
+          <div class="flex-1 bg-gradient-to-br from-gold-300 via-gold-500 to-gold-700 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3 text-ink-950">
+            <span class="font-display font-extrabold text-lg sm:text-2xl">YOU</span>
+            <span class="font-display font-bold text-2xl sm:text-4xl" data-count="50" data-suffix="%">50%</span>
+          </div>
+          <div class="flex-1 bg-ink-700 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3 text-gray-300 border-l border-white/10">
+            <span class="font-display font-extrabold text-lg sm:text-2xl">VAAN.ONE</span>
+            <span class="font-display font-bold text-2xl sm:text-4xl" data-count="50" data-suffix="%">50%</span>
+          </div>
+        </div>
+        <p class="text-center text-[11px] text-gray-500 mt-4">Profit sharing starts from 50:50 — and <span class="text-gold-300 font-semibold">only kicks in once your profit reaches the 10% minimum</span> for the cycle.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative">
+        <div class="bg-ink-900/80 border border-white/10 rounded-2xl p-6 text-center lift">
+          <div class="font-display text-4xl font-bold text-ygreen">$0</div>
+          <div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-2">Upfront Fees</div>
+          <p class="text-gray-400 text-xs mt-2">No license, no setup cost</p>
+        </div>
+        <div class="bg-ink-900/80 border border-white/10 rounded-2xl p-6 text-center lift">
+          <div class="font-display text-4xl font-bold text-ygreen">$0</div>
+          <div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-2">Monthly Charges</div>
+          <p class="text-gray-400 text-xs mt-2">No subscription, no management fee</p>
+        </div>
+        <div class="bg-ink-900/80 border border-gold-500/30 rounded-2xl p-6 text-center lift">
+          <div class="font-display text-4xl font-bold text-gold-grad">10%</div>
+          <div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-2">Min. Profit Threshold</div>
+          <p class="text-gray-400 text-xs mt-2">Below 10% profit — we take nothing</p>
+        </div>
+        <div class="bg-ink-900/80 border border-emerald-500/30 rounded-2xl p-6 text-center lift">
+          <div class="font-display text-4xl font-bold text-ygreen">10–20%</div>
+          <div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-2">Monthly Target</div>
+          <p class="text-gray-400 text-xs mt-2">Based on verified strategy performance</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PERFORMANCE ==================== -->
+<section id="performance" class="py-24 lg:py-32">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="glass glass-gold rounded-[2rem] p-8 sm:p-12 lg:p-14 relative overflow-hidden reveal">
+      <div class="blob w-96 h-96 bg-gold-500/10 -left-24 -top-24"></div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative">
+        <div>
+          <span class="text-[11px] uppercase tracking-[0.25em] text-gold-400 font-bold">Master Desk Results</span>
+          <h2 class="font-display text-3xl sm:text-4xl font-bold text-white mt-4 mb-6">Targeting <span class="text-gold-grad">10–20% Monthly</span>, Copied Straight to Your Account</h2>
+          <p class="text-gray-400 mb-8 leading-relaxed">
+            Our master trading desk is engineered to pursue <span class="text-ygreen font-semibold">10–20% returns per month</span> on XAUUSD — rigorously backtested and forward tested across diverse market cycles, built to handle raw spreads, rollovers, and everything in between.
+          </p>
+          <ul class="space-y-4">
+            <li class="flex items-center gap-3.5"><span class="w-6 h-6 rounded-full bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-check text-emerald-400 text-[10px]"></i></span><span class="text-gray-200 text-sm font-medium">Every Master Trade Mirrors to Your Account in Real Time</span></li>
+            <li class="flex items-center gap-3.5"><span class="w-6 h-6 rounded-full bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-check text-emerald-400 text-[10px]"></i></span><span class="text-gray-200 text-sm font-medium">Low Drawdown Strategy with Strict Capital Guardrails</span></li>
+            <li class="flex items-center gap-3.5"><span class="w-6 h-6 rounded-full bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-check text-emerald-400 text-[10px]"></i></span><span class="text-gray-200 text-sm font-medium">Full Transparency — Monitor Every Position &amp; Withdraw Anytime</span></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="bg-ink-900/80 border border-white/10 rounded-2xl p-5 mb-4 reveal">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold text-gray-400">Master Equity Curve · XAUUSD</span>
+              <span class="text-[10px] font-bold uppercase tracking-widest text-red-accent glass glass-gold rounded-full px-2.5 py-1">Simulated</span>
+            </div>
+            <svg viewBox="0 0 600 240" preserveAspectRatio="none" class="w-full h-44 block">
+              <defs>
+                <linearGradient id="eqFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#9acd32" stop-opacity=".30"/><stop offset="100%" stop-color="#9acd32" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="eqStroke" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="#d4f57a"/><stop offset="1" stop-color="#9acd32"/>
+                </linearGradient>
+              </defs>
+              <g stroke="rgba(255,255,255,.05)" stroke-width="1">
+                <line x1="0" y1="60" x2="600" y2="60"/><line x1="0" y1="120" x2="600" y2="120"/><line x1="0" y1="180" x2="600" y2="180"/>
+              </g>
+              <path class="eq-area" fill="url(#eqFill)" d="M0 200 C45 192 70 160 100 168 S150 124 185 136 S245 92 280 105 S345 62 380 75 S450 40 490 52 S560 18 600 22 L600 240 L0 240 Z"/>
+              <path class="eq-line" fill="none" stroke="url(#eqStroke)" stroke-width="3" stroke-linecap="round" d="M0 200 C45 192 70 160 100 168 S150 124 185 136 S245 92 280 105 S345 62 380 75 S450 40 490 52 S560 18 600 22"/>
+            </svg>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-ink-900/80 border border-white/10 rounded-2xl p-5 text-center lift"><div class="font-display text-3xl font-bold text-ygreen">10–20%</div><div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1.5">Monthly Target</div></div>
+            <div class="bg-ink-900/80 border border-white/10 rounded-2xl p-5 text-center lift"><div class="font-display text-3xl font-bold text-ygreen" data-count="100" data-suffix="%">100%</div><div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1.5">Auto-Copied</div></div>
+            <div class="bg-ink-900/80 border border-white/10 rounded-2xl p-5 text-center lift"><div class="font-display text-3xl font-bold text-ygreen">24/5</div><div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1.5">Market Watch</div></div>
+            <div class="bg-ink-900/80 border border-white/10 rounded-2xl p-5 text-center lift"><div class="font-display text-3xl font-bold text-ygreen" data-count="5" data-suffix=" min">5 min</div><div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1.5">Setup Time</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TESTIMONIALS ==================== -->
+<section id="testimonials" class="py-24 lg:py-32 border-t border-white/5 bg-ink-900/40">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+      <span class="text-[11px] uppercase tracking-[0.25em] text-gold-400 font-bold">Investor Success</span>
+      <h2 class="font-display text-3xl sm:text-5xl font-bold text-white mt-4">Trusted by Investors <span class="text-gold-grad">Worldwide</span></h2>
+      <p class="text-gray-500 mt-4 text-sm">Real reviews from verified copy trade investors running Vaan.One on live MT5 accounts.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="glass lift rounded-3xl p-8 flex flex-col justify-between reveal">
+        <div>
+          <div class="flex items-center justify-between mb-5">
+            <div class="flex text-gold-400 gap-1 text-xs"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-ygreen flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> Verified</span>
+          </div>
+          <p class="text-gray-300 text-sm leading-relaxed">"I've tried EAs before and half of them blew my account. With copy trade, real professionals manage everything. They only share profit after the 10% mark is hit — that gave me real confidence to join."</p>
+        </div>
+        <div class="flex items-center gap-3.5 pt-6 mt-6 border-t border-white/10">
+          <div class="w-11 h-11 rounded-full bg-gradient-to-br from-gold-400/30 to-gold-700/20 border border-gold-500/40 flex items-center justify-center text-gold-300 font-display font-bold text-sm">MK</div>
+          <div><div class="text-sm font-bold text-white">AJ.Ramesh</div><div class="text-[11px] text-gray-500">Verified Investor · MT5 Live</div></div>
+        </div>
+      </div>
+      <div class="glass lift rounded-3xl p-8 flex flex-col justify-between reveal" style="transition-delay:.1s">
+        <div>
+          <div class="flex items-center justify-between mb-5">
+            <div class="flex text-gold-400 gap-1 text-xs"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-ygreen flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> Verified</span>
+          </div>
+          <p class="text-gray-300 text-sm leading-relaxed">"Zero setup stress. I registered, connected my MT5 account in minutes, and the trades just started copying over. Returns have been solid — and the 50:50 split only applies once profit clears 10%. Fair deal."</p>
+        </div>
+        <div class="flex items-center gap-3.5 pt-6 mt-6 border-t border-white/10">
+          <div class="w-11 h-11 rounded-full bg-gradient-to-br from-gold-400/30 to-gold-700/20 border border-gold-500/40 flex items-center justify-center text-gold-300 font-display font-bold text-sm">ER</div>
+          <div><div class="text-sm font-bold text-white">Kingsly.</div><div class="text-[11px] text-gray-500">Verified Investor · MT5 Live</div></div>
+        </div>
+      </div>
+      <div class="glass lift rounded-3xl p-8 flex flex-col justify-between reveal" style="transition-delay:.2s">
+        <div>
+          <div class="flex items-center justify-between mb-5">
+            <div class="flex text-gold-400 gap-1 text-xs"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-ygreen flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> Verified</span>
+          </div>
+          <p class="text-gray-300 text-sm leading-relaxed">"What I love most is that my money stays in my own broker account. I can see every position in real time and withdraw whenever I want. Completely transparent — and the monthly returns speak for themselves."</p>
+        </div>
+        <div class="flex items-center gap-3.5 pt-6 mt-6 border-t border-white/10">
+          <div class="w-11 h-11 rounded-full bg-gradient-to-br from-gold-400/30 to-gold-700/20 border border-gold-500/40 flex items-center justify-center text-gold-300 font-display font-bold text-sm">DT</div>
+          <div><div class="text-sm font-bold text-white">John Joberson.</div><div class="text-[11px] text-gray-500">Verified Investor · MT5 Live</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== REGISTER FOR COPY TRADE ==================== -->
+<section id="register" class="py-24 lg:py-32 relative">
+  <div class="blob w-[500px] h-[500px] bg-gold-500/10 top-1/3 left-1/2 -translate-x-1/2"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+    <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+      <span class="text-[11px] uppercase tracking-[0.25em] text-gold-400 font-bold">Limited Slots</span>
+      <h2 class="font-display text-3xl sm:text-5xl font-bold text-white mt-4">Register Here for <span class="text-gold-grad">Copy Trading</span></h2>
+      <p class="text-gray-500 mt-4 text-sm"><span class="text-ygreen font-semibold">No upfront payment</span> — profit sharing starts from 50:50, shared only when your profit reaches a minimum of <span class="text-ygreen font-semibold">10%</span>.</p>
+    </div>
+
+    <div class="max-w-md mx-auto reveal">
+      <div class="glass glass-gold rounded-[2rem] p-8 sm:p-10 relative shadow-2xl shadow-gold-500/10 ring-1 ring-gold-500/30">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-gold-200 via-gold-400 to-gold-600 text-ink-950 px-5 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-[0.2em] shadow-lg shadow-gold-500/40 whitespace-nowrap">
+          Copy Trade · 50:50
+        </div>
+
+        <div class="text-center pt-4 pb-8 border-b border-white/10">
+          <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-gold-200 via-gold-500 to-gold-700 flex items-center justify-center font-display font-bold text-xl text-ink-950 shadow-lg shadow-gold-500/40"><i class="fa-solid fa-copy"></i></div>
+          <h3 class="font-display text-xl font-bold text-white">Vaan.One Copy Trade</h3>
+          <p class="text-gray-500 text-xs mt-1.5">Professional XAUUSD trading, copied to your account</p>
+          <div class="mt-7 flex items-baseline justify-center gap-2">
+            <span class="font-display text-6xl font-bold text-gold-grad">50:50</span>
+            <span class="text-gray-500 font-medium">profit share</span>
+          </div>
+          <div class="mt-3 inline-flex items-center gap-2 text-xs text-ygreen font-semibold glass rounded-full px-4 py-1.5">
+            <i class="fa-solid fa-lock"></i> Shared only after 10% minimum profit
+          </div>
+          <div class="mt-2 inline-flex items-center gap-2 text-xs text-ygreen font-semibold glass rounded-full px-4 py-1.5">
+            <i class="fa-solid fa-chart-line"></i> Target Returns: 10–20% / month
+          </div>
+        </div>
+
+        <ul class="space-y-4 py-8 text-sm text-gray-300">
+          <li class="flex items-center gap-3.5"><i class="fa-solid fa-check text-gold-400 text-xs w-5 h-5 rounded-full bg-gold-500/15 border border-gold-500/30 flex items-center justify-center flex-shrink-0"></i>Target Returns of 10–20% Per Month</li>
+          <li class="flex items-center gap-3.5"><i class="fa-solid fa-check text-gold-400 text-xs w-5 h-5 rounded-full bg-gold-500/15 border border-gold-500/30 flex items-center justify-center flex-shrink-0"></i>Profit Sharing Starts from 50:50</li>
+          <li class="flex items-center gap-3.5"><i class="fa-solid fa-check text-gold-400 text-xs w-5 h-5 rounded-full bg-gold-500/15 border border-gold-500/30 flex items-center justify-center flex-shrink-0"></i>Shared Only When Profit Reaches Minimum 10%</li>
+          <li class="flex items-center gap-3.5"><i class="fa-solid fa-check text-gold-400 text-xs w-5 h-5 rounded-full bg-gold-500/15 border border-gold-500/30 flex items-center justify-center flex-shrink-0"></i>Below 10% Profit — You Keep 100%</li>
+          <li class="flex items-center gap-3.5"><i class="fa-solid fa-check text-gold-400 text-xs w-5 h-5 rounded-full bg-gold-500/15 border border-gold-500/30 flex items-center justify-center flex-shrink-0"></i>No Upfront Fees, No Monthly Subscription</li>
+          <li class="flex items-center gap-3.5"><i class="fa-solid fa-check text-gold-400 text-xs w-5 h-5 rounded-full bg-gold-500/15 border border-gold-500/30 flex items-center justify-center flex-shrink-0"></i>Funds Stay in Your Broker Account</li>
+          <li class="flex items-center gap-3.5"><i class="fa-solid fa-check text-gold-400 text-xs w-5 h-5 rounded-full bg-gold-500/15 border border-gold-500/30 flex items-center justify-center flex-shrink-0"></i>Withdraw Anytime · Full Transparency</li>
+          <li class="flex items-center gap-3.5"><i class="fa-solid fa-check text-gold-400 text-xs w-5 h-5 rounded-full bg-gold-500/15 border border-gold-500/30 flex items-center justify-center flex-shrink-0"></i>VIP Support via Telegram</li>
+        </ul>
+
+        <button onclick="openRegister()" class="btn-gold w-full font-extrabold py-4 rounded-2xl transition-all hover:-translate-y-0.5">
+          <i class="fa-solid fa-user-plus mr-2"></i>Register for Copy Trade
+        </button>
+        <p class="text-center text-[11px] text-gray-500 mt-4">
+          Prefer email? Write to us directly at
+          <a href="mailto:valan@outlook.com?subject=Copy%20Trade%20Registration%20%E2%80%94%20Vaan.One" class="text-gold-400 font-semibold hover:text-gold-300 transition-colors">valan@outlook.com</a>
+        </p>
+        <div class="flex items-center justify-center gap-5 mt-5 text-[11px] text-gray-500">
+          <span class="flex items-center gap-1.5 text-ygreen"><i class="fa-solid fa-circle-check"></i> No upfront fees</span>
+          <span class="flex items-center gap-1.5"><i class="fa-solid fa-envelope text-gold-400"></i> Register via email</span>
+          <span class="flex items-center gap-1.5"><i class="fa-solid fa-paper-plane text-gold-400"></i> Fast activation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FAQ ==================== -->
+<section id="faq" class="py-24 lg:py-32 border-t border-white/5 bg-ink-900/40">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-14 reveal">
+      <span class="text-[11px] uppercase tracking-[0.25em] text-gold-400 font-bold">Got Questions?</span>
+      <h2 class="font-display text-3xl sm:text-5xl font-bold text-white mt-4">Frequently Asked <span class="text-gold-grad">Questions</span></h2>
+    </div>
+
+    <div class="space-y-4">
+      <div class="faq-item glass rounded-2xl overflow-hidden transition-colors reveal">
+        <button class="w-full px-6 py-5 text-left font-semibold text-white flex justify-between items-center gap-4" onclick="toggleFaq(this)" aria-expanded="false">
+          <span>What exactly is copy trading?</span>
+          <i class="faq-icon fa-solid fa-chevron-down text-gold-400 text-sm flex-shrink-0"></i>
+        </button>
+        <div class="faq-body"><p class="px-6 pb-6 text-gray-400 text-sm leading-relaxed">Copy trading automatically mirrors every trade from our professional master account onto your own MT5 account in real time. When our traders open, manage or close a position on XAUUSD, the same action happens on your account — instantly and hands-free.</p></div>
+      </div>
+
+      <div class="faq-item glass rounded-2xl overflow-hidden transition-colors reveal" style="transition-delay:.05s">
+        <button class="w-full px-6 py-5 text-left font-semibold text-white flex justify-between items-center gap-4" onclick="toggleFaq(this)" aria-expanded="false">
+          <span>How does the 50:50 profit sharing work?</span>
+          <i class="faq-icon fa-solid fa-chevron-down text-gold-400 text-sm flex-shrink-0"></i>
+        </button>
+        <div class="faq-body"><p class="px-6 pb-6 text-gray-400 text-sm leading-relaxed">Profit sharing starts from <span class="text-gold-300 font-semibold">50:50 — 50% for you, 50% for Vaan.One</span>. However, sharing only applies <span class="text-gold-300 font-semibold">once your account profit reaches a minimum of 10%</span> in a monthly profit cycle. This keeps us fully motivated to perform, because we earn only when you do.</p></div>
+      </div>
+
+      <div class="faq-item glass rounded-2xl overflow-hidden transition-colors reveal" style="transition-delay:.1s">
+        <button class="w-full px-6 py-5 text-left font-semibold text-white flex justify-between items-center gap-4" onclick="toggleFaq(this)" aria-expanded="false">
+          <span>What happens if my profit is below 10%?</span>
+          <i class="faq-icon fa-solid fa-chevron-down text-gold-400 text-sm flex-shrink-0"></i>
+        </button>
+        <div class="faq-body"><p class="px-6 pb-6 text-gray-400 text-sm leading-relaxed">If your profit for the cycle is below the <span class="text-gold-300 font-semibold">10% minimum threshold</span>, <span class="text-ygreen font-semibold">no profit sharing happens at all — you keep 100% of the profit</span>. There are no fees, no charges, and no obligations. We only participate once your profit genuinely crosses the 10% mark.</p></div>
+      </div>
+
+      <div class="faq-item glass rounded-2xl overflow-hidden transition-colors reveal" style="transition-delay:.15s">
+        <button class="w-full px-6 py-5 text-left font-semibold text-white flex justify-between items-center gap-4" onclick="toggleFaq(this)" aria-expanded="false">
+          <span>Are the 10–20% monthly returns guaranteed?</span>
+          <i class="faq-icon fa-solid fa-chevron-down text-gold-400 text-sm flex-shrink-0"></i>
+        </button>
+        <div class="faq-body"><p class="px-6 pb-6 text-gray-400 text-sm leading-relaxed">The <span class="text-gold-300 font-semibold">10–20% monthly figure is our target</span>, based on the strategy's historical and live performance. Trading always involves risk, and returns can vary from month to month — that's exactly why profit is shared only after the 10% minimum is reached. We never promise guaranteed results, and we encourage responsible investing.</p></div>
+      </div>
+
+      <div class="faq-item glass rounded-2xl overflow-hidden transition-colors reveal" style="transition-delay:.2s">
+        <button class="w-full px-6 py-5 text-left font-semibold text-white flex justify-between items-center gap-4" onclick="toggleFaq(this)" aria-expanded="false">
+          <span>What is the minimum deposit to start?</span>
+          <i class="faq-icon fa-solid fa-chevron-down text-gold-400 text-sm flex-shrink-0"></i>
+        </button>
+        <div class="faq-body"><p class="px-6 pb-6 text-gray-400 text-sm leading-relaxed">We recommend a minimum balance of <span class="text-red-accent font-semibold">$250</span> on a Standard account,<span class="text-red-accent font-semibold"></span> ensures proper risk management and 0.01 lot sizing for XAUUSD.</p></div>
+      </div>
+
+      <div class="faq-item glass rounded-2xl overflow-hidden transition-colors reveal" style="transition-delay:.25s">
+        <button class="w-full px-6 py-5 text-left font-semibold text-white flex justify-between items-center gap-4" onclick="toggleFaq(this)" aria-expanded="false">
+          <span>Do I keep control of my funds?</span>
+          <i class="faq-icon fa-solid fa-chevron-down text-gold-400 text-sm flex-shrink-0"></i>
+        </button>
+        <div class="faq-body"><p class="px-6 pb-6 text-gray-400 text-sm leading-relaxed">Yes — <span class="text-ygreen font-semibold">your money always stays in your own broker account</span>. You can watch every trade live, and you're free to withdraw your funds at any time. We never touch your deposits.</p></div>
+      </div>
+
+      <div class="faq-item glass rounded-2xl overflow-hidden transition-colors reveal" style="transition-delay:.3s">
+        <button class="w-full px-6 py-5 text-left font-semibold text-white flex justify-between items-center gap-4" onclick="toggleFaq(this)" aria-expanded="false">
+          <span>How do I register for copy trade?</span>
+          <i class="faq-icon fa-solid fa-chevron-down text-gold-400 text-sm flex-shrink-0"></i>
+        </button>
+        <div class="faq-body"><p class="px-6 pb-6 text-gray-400 text-sm leading-relaxed">Simply click <span class="text-gold-300 font-semibold">Register for Copy Trade</span> and fill in your details. Your registration is emailed directly to us at <a href="mailto:valan@outlook.com" class="text-gold-400 font-semibold hover:text-gold-300">valan@outlook.com</a>, and we'll send your connection instructions and activate your copy slot right away.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FINAL CTA ==================== -->
+<section class="py-20">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
+    <div class="relative overflow-hidden rounded-[2rem] border border-gold-500/30 bg-gradient-to-br from-ink-800 via-ink-900 to-ink-950 px-8 py-14 sm:px-14 text-center">
+      <div class="blob w-80 h-80 bg-gold-500/20 -top-24 left-1/4"></div>
+      <div class="blob w-80 h-80 bg-amber-600/10 -bottom-24 right-1/4"></div>
+      <div class="relative">
+        <i class="fa-solid fa-handshake text-gold-400 text-3xl mb-5"></i>
+        <h2 class="font-display text-3xl sm:text-4xl font-bold text-white">Ready to Copy the <span class="text-gold-grad">Experts?</span></h2>
+        <p class="text-gray-400 mt-4 max-w-xl mx-auto text-sm sm:text-base">Register for copy trading today — <span class="text-ygreen font-semibold">no upfront fees</span>, profit sharing from <span class="text-ygreen font-semibold">50:50</span>, shared only when profit reaches <span class="text-ygreen font-semibold">10% minimum</span>, and target returns of <span class="text-ygreen font-semibold">10–20% monthly</span>.</p>
+        <button onclick="openRegister()" class="btn-gold inline-flex items-center gap-3 font-bold px-9 py-4 rounded-xl mt-8 transition-all hover:-translate-y-0.5">
+          Register for Copy Trade <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="bg-black border-t border-white/10 py-14">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div>
+        <a href="#" class="flex items-center gap-3">
+          <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold-200 via-gold-500 to-gold-700 flex items-center justify-center font-display font-bold text-ink-950">V</span>
+          <span class="font-display text-lg font-bold text-white">Vaan<span class="text-gold-grad">.One</span></span>
+        </a>
+        <p class="text-gray-500 text-xs mt-4 leading-relaxed max-w-xs">Professional XAUUSD Copy Trading. Profit sharing from 50:50 — shared only when profit reaches a minimum of 10%.</p>
+      </div>
+      <div class="md:text-center">
+        <div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Quick Links</div>
+        <div class="flex md:justify-center flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500">
+          <a href="#how" class="hover:text-gold-400 transition-colors">How It Works</a>
+          <a href="#profit" class="hover:text-gold-400 transition-colors">Profit Sharing</a>
+          <a href="#performance" class="hover:text-gold-400 transition-colors">Performance</a>
+          <a href="#register" class="hover:text-gold-400 transition-colors">Register</a>
+          <a href="#faq" class="hover:text-gold-400 transition-colors">FAQ</a>
+        </div>
+      </div>
+      <div class="md:text-right">
+        <div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Contact</div>
+        <div class="text-sm text-gray-500 space-y-2">
+          <div><i class="fa-regular fa-envelope text-gold-400 mr-2"></i><a href="mailto:valan@outlook.com" class="hover:text-gold-400 transition-colors">valan@outlook.com</a></div>
+          <div><i class="fa-brands fa-telegram text-gold-400 mr-2"></i>Telegram VIP Channel</div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-12 pt-7 border-t border-white/10 text-center space-y-3">
+      <p class="text-[11px] text-red-accent max-w-2xl mx-auto leading-relaxed"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Risk Warning: Copy trading, foreign exchange and CFD trading carry a high level of risk and may not be suitable for all investors. Return figures such as 10–20% monthly are targets based on historical performance and are <span class="font-bold">not guaranteed</span>. Past performance is not indicative of future results. Only invest what you can afford to lose.</p>
+      <p class="text-[11px] text-gray-500">&copy; <span id="year"></span> Vaan.One. All rights reserved. Designed by JJ</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ==================== REGISTER MODAL ==================== -->
+<div id="registerModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+  <div class="modal-card glass glass-gold max-w-md w-full rounded-[1.75rem] relative max-h-[92vh] overflow-y-auto shadow-2xl shadow-gold-500/10">
+    <button onclick="closeRegister()" class="absolute top-5 right-5 w-9 h-9 rounded-full glass flex items-center justify-center text-gray-400 hover:text-white transition-colors" aria-label="Close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <!-- form view -->
+    <div id="registerFormWrap" class="p-8">
+      <div class="text-center mb-7">
+        <div class="w-12 h-12 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-gold-200 via-gold-500 to-gold-700 flex items-center justify-center text-ink-950 shadow-lg shadow-gold-500/40"><i class="fa-solid fa-copy text-lg"></i></div>
+        <h3 class="font-display text-2xl font-bold text-white">Register for Copy Trade</h3>
+        <p class="text-gray-500 text-xs mt-1.5">Profit sharing from <span class="text-gold-300 font-semibold">50:50</span> · shared only after <span class="text-gold-300 font-semibold">10% min. profit</span> · emailed to <span class="text-gold-300 font-semibold">valan@outlook.com</span></p>
+      </div>
+
+      <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4">
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Your Name</label>
+          <input type="text" id="regName" name="name" required class="field w-full rounded-xl px-4 py-3 text-sm text-white" placeholder="John Doe">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Email Address</label>
+          <input type="email" id="regEmail" name="email" required class="field w-full rounded-xl px-4 py-3 text-sm text-white" placeholder="john@example.com">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">MT5 Account Number</label>
+          <input type="text" id="regMt5" name="mt5" required class="field w-full rounded-xl px-4 py-3 text-sm text-white" placeholder="e.g. 12345678">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Planned Investment Amount (USD) — Optional</label>
+          <input type="text" id="regAmount" name="amount" class="field w-full rounded-xl px-4 py-3 text-sm text-white" placeholder="e.g. 1000 (helps us set up your account)">
+        </div>
+
+        <!-- error fallback box (shown only if the send fails) -->
+        <div id="regError" class="hidden rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-xs text-red-300 leading-relaxed">
+          <span class="font-bold">Couldn't send automatically.</span> Please email us your details directly:
+          <a id="regFallbackMail" href="mailto:valan@outlook.com?subject=Copy%20Trade%20Registration%20%E2%80%94%20Vaan.One" class="text-gold-300 font-semibold underline">valan@outlook.com</a>
+        </div>
+
+        <button type="submit" id="regSubmitBtn" class="btn-gold w-full font-extrabold py-4 rounded-2xl transition-all hover:-translate-y-0.5 mt-2">
+          <i class="fa-solid fa-envelope-open-text mr-2"></i>Send Copy Trade Registration
+        </button>
+        <p class="text-center text-[11px] text-gray-500"><i class="fa-solid fa-shield-halved mr-1.5 text-gold-400"></i>Sent securely — you'll get a confirmation, and we'll reply with your connection instructions &amp; copy slot activation.</p>
+      </form>
+    </div>
+
+    <!-- success view -->
+    <div id="registerSuccess" class="hidden p-10 text-center">
+      <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center"><i class="fa-solid fa-check text-emerald-400 text-2xl"></i></div>
+      <h3 class="font-display text-2xl font-bold text-white mb-3">Registration Sent!</h3>
+      <p class="text-gray-400 text-sm leading-relaxed mb-6">Your copy trade registration has been emailed to <span class="text-gold-300 font-semibold">valan@outlook.com</span>. We'll reply with your connection instructions and activate your copy slot shortly.</p>
+      <p class="text-gray-500 text-xs mb-8">No reply within 24 hours? <a href="mailto:valan@outlook.com?subject=Copy%20Trade%20Registration%20%E2%80%94%20Vaan.One" class="text-gold-400 font-semibold hover:text-gold-300 transition-colors">Email us directly here</a></p>
+      <button onclick="closeRegister()" class="btn-gold w-full font-bold py-3.5 rounded-xl">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ==========================================================
+     FORM DELIVERY — registrations are emailed to this address
+     via FormSubmit (free, no signup). FIRST-EVER submission
+     triggers a one-time activation email — click the link in it.
+     ========================================================== */
+  var TARGET_EMAIL = 'valan@outlook.com';
+  var FORM_ENDPOINT = 'https://formsubmit.co/ajax/' + TARGET_EMAIL;
+
+  var yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  var navbar = document.getElementById('navbar');
+  if (navbar) {
+    window.addEventListener('scroll', function () {
+      navbar.classList.toggle('bg-ink-950/85', window.scrollY > 20);
+      navbar.classList.toggle('backdrop-blur-xl', window.scrollY > 20);
+      navbar.classList.toggle('border-white/10', window.scrollY > 20);
+      navbar.classList.toggle('shadow-lg', window.scrollY > 20);
+    }, { passive: true });
+  }
+
+  window.toggleMobileMenu = function () {
+    var m = document.getElementById('mobileMenu');
+    if (m) m.classList.toggle('hidden');
+  };
+
+  window.toggleFaq = function (btn) {
+    var item = btn.closest('.faq-item');
+    if (!item) return;
+    var body = item.querySelector('.faq-body');
+    var icon = btn.querySelector('.faq-icon');
+    var isOpen = item.classList.contains('open');
+
+    document.querySelectorAll('.faq-item.open').forEach(function (o) {
+      if (o !== item) {
+        o.classList.remove('open');
+        var b = o.querySelector('.faq-body'); if (b) b.style.maxHeight = '0px';
+        var i = o.querySelector('.faq-icon'); if (i) i.style.transform = '';
+        var ob = o.querySelector('button');   if (ob) ob.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    if (isOpen) {
+      item.classList.remove('open');
+      if (body) body.style.maxHeight = '0px';
+      if (icon) icon.style.transform = '';
+      btn.setAttribute('aria-expanded', 'false');
+    } else {
+      item.classList.add('open');
+      if (body) body.style.maxHeight = body.scrollHeight + 'px';
+      if (icon) icon.style.transform = 'rotate(180deg)';
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  };
+
+  document.querySelectorAll('.faq-body').forEach(function (b) { b.style.maxHeight = '0px'; });
+
+  function animateCount(el) {
+    if (!el || el.dataset.count === undefined) return;
+    var target = parseFloat(el.dataset.count);
+    var dec    = parseInt(el.dataset.decimals || 0, 10);
+    var suf    = el.dataset.suffix || '';
+    var dur = 1700, t0 = performance.now();
+    (function frame(t) {
+      var p = Math.min((t - t0) / dur, 1);
+      el.textContent = (target * (1 - Math.pow(1 - p, 3))).toFixed(dec) + suf;
+      if (p < 1) requestAnimationFrame(frame);
+    })(t0);
+  }
+
+  var reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    reveals.forEach(function (el) { el.classList.add('reveal-init'); });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in-view');
+        e.target.querySelectorAll('[data-count]').forEach(animateCount);
+        if (e.target.hasAttribute('data-count')) animateCount(e.target);
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(function (el) { io.observe(el); });
+  }
+
+  /* ============ register modal ============ */
+  window.openRegister = function () {
+    var m = document.getElementById('registerModal');
+    if (!m) return;
+    var fw = document.getElementById('registerFormWrap'); if (fw) fw.classList.remove('hidden');
+    var sc = document.getElementById('registerSuccess');  if (sc) sc.classList.add('hidden');
+    var er = document.getElementById('regError');         if (er) er.classList.add('hidden');
+    m.classList.remove('hidden');
+    m.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeRegister = function () {
+    var m = document.getElementById('registerModal');
+    if (!m) return;
+    m.classList.add('hidden');
+    m.classList.remove('flex');
+    document.body.style.overflow = '';
+  };
+
+  function buildFallbackMailto(name, email, mt5, amount) {
+    var subject = 'Copy Trade Registration - Vaan.One';
+    var body =
+      'Hi Vaan.One team,\n\n' +
+      'I would like to register for COPY TRADING.\n\n' +
+      'Name: '                  + name   + '\n' +
+      'Email: '                 + email  + '\n' +
+      'MT5 Account Number: '    + mt5    + '\n' +
+      'Planned Investment: '    + (amount || 'Not specified') + '\n\n' +
+      'Please activate my copy trade slot and send me the connection instructions.\n\n' +
+      'Thank you!';
+    return 'mailto:' + TARGET_EMAIL +
+           '?subject=' + encodeURIComponent(subject) +
+           '&body='    + encodeURIComponent(body);
+  }
+
+  window.handleRegister = function (e) {
+    e.preventDefault();
+
+    var nameEl    = document.getElementById('regName');
+    var emailEl   = document.getElementById('regEmail');
+    var mt5El     = document.getElementById('regMt5');
+    var amountEl  = document.getElementById('regAmount');
+    var btn       = document.getElementById('regSubmitBtn');
+    var errBox    = document.getElementById('regError');
+
+    var name   = (nameEl   && nameEl.value.trim())   || '';
+    var email  = (emailEl  && emailEl.value.trim())  || '';
+    var mt5    = (mt5El    && mt5El.value.trim())    || '';
+    var amount = (amountEl && amountEl.value.trim()) || '';
+
+    /* set the manual fallback link with the user's details pre-filled */
+    var fb = document.getElementById('regFallbackMail');
+    if (fb) fb.href = buildFallbackMailto(name, email, mt5, amount);
+    if (errBox) errBox.classList.add('hidden');
+
+    /* loading state */
+    var originalBtn = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Sending…';
+
+    fetch(FORM_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject:       'Copy Trade Registration - Vaan.One',
+        _template:      'table',
+        _captcha:       'false',
+        _autoresponse:  'Thank you for registering for Vaan.One Copy Trading! We will email your connection instructions and activate your copy slot shortly. Profit sharing starts from 50:50 and applies only when your profit reaches a minimum of 10%. — Vaan.One Team',
+        'Name':                   name,
+        'Email':                  email,
+        'MT5 Account Number':     mt5,
+        'Planned Investment':     amount || 'Not specified'
+      })
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data && (data.success === 'true' || data.success === true)) {
+        /* success — show confirmation view */
+        var fw = document.getElementById('registerFormWrap'); if (fw) fw.classList.add('hidden');
+        var sc = document.getElementById('registerSuccess');  if (sc) sc.classList.remove('hidden');
+      } else {
+        throw new Error('FormSubmit rejected: ' + (data && data.message ? data.message : 'unknown'));
+      }
+    })
+    .catch(function () {
+      /* network/service failure — show manual fallback */
+      if (errBox) errBox.classList.remove('hidden');
+    })
+    .then(function () {
+      /* restore button in all cases */
+      btn.disabled = false;
+      btn.innerHTML = originalBtn;
+    });
+  };
+
+  var modal = document.getElementById('registerModal');
+  if (modal) {
+    modal.addEventListener('click', function (e) {
+      if (e.target.id === 'registerModal') closeRegister();
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeRegister();
+  });
+})();
+</script>
+</body>
+</html>
