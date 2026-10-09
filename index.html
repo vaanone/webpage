@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vaan.One — Copy Trading · Profit Sharing from 50:50 · 10–20% Monthly Returns</title>
+<title>Vaan.One — Copy Trading · Custom MT5 Indicators & EA Development</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/vaanone/images/main/LogoV.png">
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
@@ -35,6 +36,7 @@ tailwind.config = {
   body .text-gray-500 { color:#aeb8c6; }
   body .text-gray-400 { color:#c3ccd9; }
   input::placeholder, textarea::placeholder { color:#8a93a5; }
+  select option { background:#0a0e18; color:#e5e7eb; }
 
   .grain{ position:fixed; inset:0; z-index:5; pointer-events:none; opacity:.03;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
@@ -106,16 +108,19 @@ tailwind.config = {
 
 <!-- ==================== NAV ==================== -->
 <header id="navbar" class="sticky top-0 z-40 transition-all duration-300 border-b border-transparent">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[76px] flex items-center justify-between">
-    <a href="#" class="flex items-center gap-3 group">
-      <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-200 via-gold-500 to-gold-700 flex items-center justify-center font-display font-bold text-lg text-ink-950 shadow-lg shadow-gold-500/30 group-hover:rotate-6 transition-transform duration-300">V</span>
-      <span class="font-display text-xl font-bold tracking-wide text-white">Vaan<span class="text-gold-grad">.One</span></span>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[64px] flex items-center justify-between">
+    <a href="#" aria-label="Vaan.One — Home" class="flex items-center group">
+      <img src="https://raw.githubusercontent.com/vaanone/images/main/Logo.png" alt="Vaan.One Logo"
+           class="h-12 sm:h-[42px] w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+           onerror="if(!this.dataset.f){this.dataset.f=1;this.src='https://raw.githubusercontent.com/vaanone/images/master/Logo.png';}else{this.style.display='none';this.nextElementSibling.style.display='flex';}">
+      <span style="display:none" class="w-12 h-12 rounded-xl bg-gradient-to-br from-gold-200 via-gold-500 to-gold-700 items-center justify-center font-display font-bold text-xl text-ink-950 shadow-lg shadow-gold-500/30">V</span>
     </a>
 
-    <nav class="hidden md:flex items-center gap-9 text-sm font-medium text-gray-400">
+    <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
       <a href="#how" class="hover:text-gold-400 transition-colors">How It Works</a>
       <a href="#profit" class="hover:text-gold-400 transition-colors">Profit Sharing</a>
       <a href="#performance" class="hover:text-gold-400 transition-colors">Performance</a>
+      <a href="#development" class="hover:text-gold-400 transition-colors">MT5 Development</a>
       <a href="#testimonials" class="hover:text-gold-400 transition-colors">Reviews</a>
       <a href="#faq" class="hover:text-gold-400 transition-colors">FAQ</a>
     </nav>
@@ -134,6 +139,7 @@ tailwind.config = {
     <a href="#how" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-gold-400 font-medium">How It Works</a>
     <a href="#profit" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-gold-400 font-medium">Profit Sharing</a>
     <a href="#performance" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-gold-400 font-medium">Performance</a>
+    <a href="#development" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-gold-400 font-medium">MT5 Development</a>
     <a href="#testimonials" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-gold-400 font-medium">Reviews</a>
     <a href="#faq" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-gold-400 font-medium">FAQ</a>
     <button onclick="toggleMobileMenu();openRegister()" class="btn-gold w-full text-center font-bold py-3 rounded-xl text-sm">Register for Copy Trade</button>
@@ -173,7 +179,12 @@ tailwind.config = {
         </a>
       </div>
 
-      <div class="mt-14 grid grid-cols-2 md:grid-cols-4 gap-4">
+      <p class="mt-5 text-sm text-gray-500">
+        Also need a custom tool? We're <span class="text-gold-300 font-semibold">MT5 indicator &amp; EA quant programmers</span> —
+        <a href="#development" class="text-gold-400 font-semibold hover:text-gold-300 underline underline-offset-4">see MT5 Development <i class="fa-solid fa-arrow-right text-[10px]"></i></a>
+      </p>
+
+      <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="glass rounded-2xl px-5 py-4 text-left lift"><div class="font-display font-bold text-xl text-ygreen">10–20%</div><div class="text-[11px] text-gray-500 font-medium mt-0.5 uppercase tracking-wider">Monthly Target Returns</div></div>
         <div class="glass rounded-2xl px-5 py-4 text-left lift"><div class="font-display font-bold text-xl text-ygreen">50:50</div><div class="text-[11px] text-gray-500 font-medium mt-0.5 uppercase tracking-wider">Profit Sharing Starts From</div></div>
         <div class="glass rounded-2xl px-5 py-4 text-left lift"><div class="font-display font-bold text-xl text-ygreen">10%</div><div class="text-[11px] text-gray-500 font-medium mt-0.5 uppercase tracking-wider">Min. Profit to Share</div></div>
@@ -240,7 +251,6 @@ tailwind.config = {
         <p class="text-gray-500 mt-4 text-sm">No license fees. No subscriptions. No management charges. And profit is shared <span class="text-gold-300 font-semibold">only when your profit reaches a minimum of 10%</span> in the cycle — below that, you keep everything.</p>
       </div>
 
-      <!-- 10% threshold rule banner -->
       <div class="relative mb-8 rounded-2xl border border-gold-500/40 bg-gradient-to-r from-gold-500/10 via-gold-500/5 to-transparent p-6 flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
         <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-200 via-gold-500 to-gold-700 flex items-center justify-center text-ink-950 text-xl shadow-lg shadow-gold-500/30 flex-shrink-0"><i class="fa-solid fa-lock"></i></div>
         <div>
@@ -249,7 +259,6 @@ tailwind.config = {
         </div>
       </div>
 
-      <!-- 50:50 visual split -->
       <div class="relative mb-10">
         <div class="h-16 sm:h-20 rounded-2xl overflow-hidden flex border border-white/10 shadow-2xl shadow-gold-500/10">
           <div class="flex-1 bg-gradient-to-br from-gold-300 via-gold-500 to-gold-700 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3 text-ink-950">
@@ -344,8 +353,59 @@ tailwind.config = {
   </div>
 </section>
 
+<!-- ==================== MT5 DEVELOPMENT ==================== -->
+<section id="development" class="py-24 lg:py-32 border-t border-white/5 bg-ink-900/40 relative overflow-hidden">
+  <div class="blob w-[420px] h-[420px] bg-gold-500/10 top-20 -left-40 animate-floaty"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+    <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+      <span class="text-[11px] uppercase tracking-[0.25em] text-gold-400 font-bold">Custom Development · MQL5</span>
+      <h2 class="font-display text-3xl sm:text-5xl font-bold text-white mt-4">MT5 Indicator &amp; EA <span class="text-gold-grad">Quant Programming</span></h2>
+      <p class="text-gray-500 mt-4 text-sm">Beyond copy trading — we build <span class="text-gold-300 font-semibold">custom MT5 indicators and Expert Advisors</span>. Have a trading idea? We turn it into clean, fast, reliable MQL5 code.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="glass lift rounded-3xl p-8 reveal">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500/25 to-gold-700/10 border border-gold-500/30 flex items-center justify-center text-gold-400 text-xl mb-6 shadow-inner"><i class="fa-solid fa-chart-simple"></i></div>
+        <h3 class="font-display text-xl font-bold text-white mb-3">Custom MT5 Indicators</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Buy/sell signal arrows, dashboards, multi-timeframe scanners, alerts and custom visual tools — built precisely to your trading logic.</p>
+      </div>
+      <div class="glass lift rounded-3xl p-8 reveal" style="transition-delay:.1s">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500/25 to-gold-700/10 border border-gold-500/30 flex items-center justify-center text-gold-400 text-xl mb-6 shadow-inner"><i class="fa-solid fa-robot"></i></div>
+        <h3 class="font-display text-xl font-bold text-white mb-3">Custom Expert Advisors</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Fully automated EAs with risk management, lot sizing, trailing stops, news filters and preset files — hands-free trading on MT5.</p>
+      </div>
+      <div class="glass lift rounded-3xl p-8 reveal" style="transition-delay:.2s">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500/25 to-gold-700/10 border border-gold-500/30 flex items-center justify-center text-gold-400 text-xl mb-6 shadow-inner"><i class="fa-solid fa-code"></i></div>
+        <h3 class="font-display text-xl font-bold text-white mb-3">Quant Strategy Development</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Strategy backtesting, parameter optimization, and conversion of your ideas (or TradingView scripts) into clean, efficient MQL5 code.</p>
+      </div>
+      <div class="glass lift rounded-3xl p-8 reveal" style="transition-delay:.3s">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500/25 to-gold-700/10 border border-gold-500/30 flex items-center justify-center text-gold-400 text-xl mb-6 shadow-inner"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+        <h3 class="font-display text-xl font-bold text-white mb-3">Fixes &amp; Upgrades</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Revive, fix or upgrade your existing indicators and EAs — from logic bugs and repainting issues to full code refactors.</p>
+      </div>
+    </div>
+
+    <div class="text-center mt-12 reveal">
+      <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-[11px] text-gray-500 mb-8">
+        <span class="flex items-center gap-1.5 text-ygreen"><i class="fa-solid fa-circle-check"></i> Free quote</span>
+        <span class="flex items-center gap-1.5 text-ygreen"><i class="fa-solid fa-circle-check"></i> Clean MQL5 source code included</span>
+        <span class="flex items-center gap-1.5 text-ygreen"><i class="fa-solid fa-circle-check"></i> Fast delivery</span>
+        <span class="flex items-center gap-1.5 text-ygreen"><i class="fa-solid fa-circle-check"></i> Post-delivery bug-fix support</span>
+      </div>
+      <button onclick="openRegister('Custom Development (Indicator / EA)')" class="btn-gold inline-flex items-center gap-3 font-bold px-8 py-4 rounded-xl transition-all hover:-translate-y-0.5">
+        <i class="fa-solid fa-code"></i> Request a Development Quote
+      </button>
+      <p class="text-[11px] text-gray-500 mt-4">
+        Prefer email? Describe your project at
+        <a href="mailto:valan@outlook.com?subject=Custom%20MT5%20Development%20Inquiry%20%E2%80%94%20Vaan.One" class="text-gold-400 font-semibold hover:text-gold-300 transition-colors">valan@outlook.com</a>
+      </p>
+    </div>
+  </div>
+</section>
+
 <!-- ==================== TESTIMONIALS ==================== -->
-<section id="testimonials" class="py-24 lg:py-32 border-t border-white/5 bg-ink-900/40">
+<section id="testimonials" class="py-24 lg:py-32">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center max-w-2xl mx-auto mb-16 reveal">
       <span class="text-[11px] uppercase tracking-[0.25em] text-gold-400 font-bold">Investor Success</span>
@@ -503,7 +563,7 @@ tailwind.config = {
           <span>What is the minimum deposit to start?</span>
           <i class="faq-icon fa-solid fa-chevron-down text-gold-400 text-sm flex-shrink-0"></i>
         </button>
-        <div class="faq-body"><p class="px-6 pb-6 text-gray-400 text-sm leading-relaxed">We recommend a minimum balance of <span class="text-red-accent font-semibold">$250</span> on a Standard account,<span class="text-red-accent font-semibold"></span> ensures proper risk management and 0.01 lot sizing for XAUUSD.</p></div>
+        <div class="faq-body"><p class="px-6 pb-6 text-gray-400 text-sm leading-relaxed">We recommend a minimum balance of <span class="text-red-accent font-semibold">$500</span> on a Standard account, or <span class="text-red-accent font-semibold">$50</span> (equivalent in cents) on a Cent account — this ensures proper risk management and 0.01 lot sizing for XAUUSD.</p></div>
       </div>
 
       <div class="faq-item glass rounded-2xl overflow-hidden transition-colors reveal" style="transition-delay:.25s">
@@ -515,6 +575,14 @@ tailwind.config = {
       </div>
 
       <div class="faq-item glass rounded-2xl overflow-hidden transition-colors reveal" style="transition-delay:.3s">
+        <button class="w-full px-6 py-5 text-left font-semibold text-white flex justify-between items-center gap-4" onclick="toggleFaq(this)" aria-expanded="false">
+          <span>Can you build a custom indicator or EA for me?</span>
+          <i class="faq-icon fa-solid fa-chevron-down text-gold-400 text-sm flex-shrink-0"></i>
+        </button>
+        <div class="faq-body"><p class="px-6 pb-6 text-gray-400 text-sm leading-relaxed">Yes! Besides copy trading, we are <span class="text-gold-300 font-semibold">MT5 indicator and EA quant programmers</span>. We build custom indicators, fully automated Expert Advisors, quant strategy backtests, and fix or upgrade existing MQL5 code. Click <span class="text-gold-300 font-semibold">Request a Development Quote</span> in the <a href="#development" class="text-gold-400 font-semibold hover:text-gold-300">MT5 Development</a> section, or email us with your project details for a free quote.</p></div>
+      </div>
+
+      <div class="faq-item glass rounded-2xl overflow-hidden transition-colors reveal" style="transition-delay:.35s">
         <button class="w-full px-6 py-5 text-left font-semibold text-white flex justify-between items-center gap-4" onclick="toggleFaq(this)" aria-expanded="false">
           <span>How do I register for copy trade?</span>
           <i class="faq-icon fa-solid fa-chevron-down text-gold-400 text-sm flex-shrink-0"></i>
@@ -538,6 +606,7 @@ tailwind.config = {
         <button onclick="openRegister()" class="btn-gold inline-flex items-center gap-3 font-bold px-9 py-4 rounded-xl mt-8 transition-all hover:-translate-y-0.5">
           Register for Copy Trade <i class="fa-solid fa-arrow-right"></i>
         </button>
+        <p class="mt-5 text-sm text-gray-500">Need a custom indicator or EA instead? <a href="#development" class="text-gold-400 font-semibold hover:text-gold-300 underline underline-offset-4">MT5 Development →</a></p>
       </div>
     </div>
   </div>
@@ -548,11 +617,13 @@ tailwind.config = {
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
       <div>
-        <a href="#" class="flex items-center gap-3">
-          <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold-200 via-gold-500 to-gold-700 flex items-center justify-center font-display font-bold text-ink-950">V</span>
-          <span class="font-display text-lg font-bold text-white">Vaan<span class="text-gold-grad">.One</span></span>
+        <a href="#" aria-label="Vaan.One — Home" class="inline-flex items-center">
+          <img src="https://raw.githubusercontent.com/vaanone/images/main/Logo.png" alt="Vaan.One Logo"
+               class="h-9 w-auto object-contain"
+               onerror="if(!this.dataset.f){this.dataset.f=1;this.src='https://raw.githubusercontent.com/vaanone/images/master/Logo.png';}else{this.style.display='none';this.nextElementSibling.style.display='flex';}">
+          <span style="display:none" class="w-12 h-12 rounded-xl bg-gradient-to-br from-gold-200 via-gold-500 to-gold-700 items-center justify-center font-display font-bold text-xl text-ink-950 shadow-lg shadow-gold-500/30">V</span>
         </a>
-        <p class="text-gray-500 text-xs mt-4 leading-relaxed max-w-xs">Professional XAUUSD Copy Trading. Profit sharing from 50:50 — shared only when profit reaches a minimum of 10%.</p>
+        <p class="text-gray-500 text-xs mt-4 leading-relaxed max-w-xs">Professional XAUUSD Copy Trading with profit sharing from 50:50 — shared only when profit reaches a minimum of 10%. Plus custom MT5 indicator &amp; EA quant programming.</p>
       </div>
       <div class="md:text-center">
         <div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Quick Links</div>
@@ -560,6 +631,7 @@ tailwind.config = {
           <a href="#how" class="hover:text-gold-400 transition-colors">How It Works</a>
           <a href="#profit" class="hover:text-gold-400 transition-colors">Profit Sharing</a>
           <a href="#performance" class="hover:text-gold-400 transition-colors">Performance</a>
+          <a href="#development" class="hover:text-gold-400 transition-colors">MT5 Development</a>
           <a href="#register" class="hover:text-gold-400 transition-colors">Register</a>
           <a href="#faq" class="hover:text-gold-400 transition-colors">FAQ</a>
         </div>
@@ -586,15 +658,26 @@ tailwind.config = {
       <i class="fa-solid fa-xmark"></i>
     </button>
 
-    <!-- form view -->
     <div id="registerFormWrap" class="p-8">
       <div class="text-center mb-7">
         <div class="w-12 h-12 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-gold-200 via-gold-500 to-gold-700 flex items-center justify-center text-ink-950 shadow-lg shadow-gold-500/40"><i class="fa-solid fa-copy text-lg"></i></div>
-        <h3 class="font-display text-2xl font-bold text-white">Register for Copy Trade</h3>
-        <p class="text-gray-500 text-xs mt-1.5">Profit sharing from <span class="text-gold-300 font-semibold">50:50</span> · shared only after <span class="text-gold-300 font-semibold">10% min. profit</span> · emailed to <span class="text-gold-300 font-semibold">valan@outlook.com</span></p>
+        <h3 class="font-display text-2xl font-bold text-white">Register / Request a Quote</h3>
+        <p class="text-gray-500 text-xs mt-1.5">Copy Trade · Custom Indicators · Custom EAs — emailed to <span class="text-gold-300 font-semibold">valan@outlook.com</span></p>
       </div>
 
       <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4">
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">What do you need?</label>
+          <select id="regService" name="service" class="field w-full rounded-xl px-4 py-3 text-sm text-white">
+            <option>Copy Trade Registration</option>
+            <option>Custom Development (Indicator / EA)</option>
+            <option>Custom MT5 Indicator</option>
+            <option>Custom EA / Expert Advisor</option>
+            <option>Quant Strategy / Backtesting</option>
+            <option>Fix / Upgrade Existing Code</option>
+            <option>Other</option>
+          </select>
+        </div>
         <div>
           <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Your Name</label>
           <input type="text" id="regName" name="name" required class="field w-full rounded-xl px-4 py-3 text-sm text-white" placeholder="John Doe">
@@ -604,33 +687,35 @@ tailwind.config = {
           <input type="email" id="regEmail" name="email" required class="field w-full rounded-xl px-4 py-3 text-sm text-white" placeholder="john@example.com">
         </div>
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">MT5 Account Number</label>
-          <input type="text" id="regMt5" name="mt5" required class="field w-full rounded-xl px-4 py-3 text-sm text-white" placeholder="e.g. 12345678">
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">MT5 Account Number <span class="text-gray-500 normal-case font-medium">(required for copy trade)</span></label>
+          <input type="text" id="regMt5" name="mt5" class="field w-full rounded-xl px-4 py-3 text-sm text-white" placeholder="e.g. 12345678">
         </div>
         <div>
           <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Planned Investment Amount (USD) — Optional</label>
           <input type="text" id="regAmount" name="amount" class="field w-full rounded-xl px-4 py-3 text-sm text-white" placeholder="e.g. 1000 (helps us set up your account)">
         </div>
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Project Details / Notes — Optional</label>
+          <textarea id="regNotes" name="notes" rows="3" class="field w-full rounded-xl px-4 py-3 text-sm text-white resize-none" placeholder="For development: describe your indicator/EA idea, entry-exit logic, pairs, etc."></textarea>
+        </div>
 
-        <!-- error fallback box (shown only if the send fails) -->
         <div id="regError" class="hidden rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-xs text-red-300 leading-relaxed">
           <span class="font-bold">Couldn't send automatically.</span> Please email us your details directly:
-          <a id="regFallbackMail" href="mailto:valan@outlook.com?subject=Copy%20Trade%20Registration%20%E2%80%94%20Vaan.One" class="text-gold-300 font-semibold underline">valan@outlook.com</a>
+          <a id="regFallbackMail" href="mailto:valan@outlook.com?subject=Vaan.One%20Inquiry" class="text-gold-300 font-semibold underline">valan@outlook.com</a>
         </div>
 
         <button type="submit" id="regSubmitBtn" class="btn-gold w-full font-extrabold py-4 rounded-2xl transition-all hover:-translate-y-0.5 mt-2">
-          <i class="fa-solid fa-envelope-open-text mr-2"></i>Send Copy Trade Registration
+          <i class="fa-solid fa-envelope-open-text mr-2"></i>Send Request
         </button>
-        <p class="text-center text-[11px] text-gray-500"><i class="fa-solid fa-shield-halved mr-1.5 text-gold-400"></i>Sent securely — you'll get a confirmation, and we'll reply with your connection instructions &amp; copy slot activation.</p>
+        <p class="text-center text-[11px] text-gray-500"><i class="fa-solid fa-shield-halved mr-1.5 text-gold-400"></i>Sent securely — you'll get a confirmation, and we'll reply with next steps shortly.</p>
       </form>
     </div>
 
-    <!-- success view -->
     <div id="registerSuccess" class="hidden p-10 text-center">
       <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center"><i class="fa-solid fa-check text-emerald-400 text-2xl"></i></div>
-      <h3 class="font-display text-2xl font-bold text-white mb-3">Registration Sent!</h3>
-      <p class="text-gray-400 text-sm leading-relaxed mb-6">Your copy trade registration has been emailed to <span class="text-gold-300 font-semibold">valan@outlook.com</span>. We'll reply with your connection instructions and activate your copy slot shortly.</p>
-      <p class="text-gray-500 text-xs mb-8">No reply within 24 hours? <a href="mailto:valan@outlook.com?subject=Copy%20Trade%20Registration%20%E2%80%94%20Vaan.One" class="text-gold-400 font-semibold hover:text-gold-300 transition-colors">Email us directly here</a></p>
+      <h3 class="font-display text-2xl font-bold text-white mb-3">Request Sent!</h3>
+      <p class="text-gray-400 text-sm leading-relaxed mb-6">Your request has been emailed to <span class="text-gold-300 font-semibold">valan@outlook.com</span>. We'll reply with next steps — copy trade activation &amp; connection instructions, or a development quote — shortly.</p>
+      <p class="text-gray-500 text-xs mb-8">No reply within 24 hours? <a href="mailto:valan@outlook.com?subject=Vaan.One%20Inquiry" class="text-gold-400 font-semibold hover:text-gold-300 transition-colors">Email us directly here</a></p>
       <button onclick="closeRegister()" class="btn-gold w-full font-bold py-3.5 rounded-xl">Done</button>
     </div>
   </div>
@@ -726,9 +811,11 @@ tailwind.config = {
   }
 
   /* ============ register modal ============ */
-  window.openRegister = function () {
+  window.openRegister = function (service) {
     var m = document.getElementById('registerModal');
     if (!m) return;
+    var sel = document.getElementById('regService');
+    if (sel) sel.value = service || 'Copy Trade Registration';
     var fw = document.getElementById('registerFormWrap'); if (fw) fw.classList.remove('hidden');
     var sc = document.getElementById('registerSuccess');  if (sc) sc.classList.add('hidden');
     var er = document.getElementById('regError');         if (er) er.classList.add('hidden');
@@ -745,16 +832,21 @@ tailwind.config = {
     document.body.style.overflow = '';
   };
 
-  function buildFallbackMailto(name, email, mt5, amount) {
-    var subject = 'Copy Trade Registration - Vaan.One';
+  function buildFallbackMailto(service, name, email, mt5, amount, notes) {
+    var isCopyTrade = (service === 'Copy Trade Registration');
+    var subject = isCopyTrade ? 'Copy Trade Registration - Vaan.One' : 'Custom Development Inquiry - Vaan.One';
     var body =
       'Hi Vaan.One team,\n\n' +
-      'I would like to register for COPY TRADING.\n\n' +
-      'Name: '                  + name   + '\n' +
-      'Email: '                 + email  + '\n' +
-      'MT5 Account Number: '    + mt5    + '\n' +
-      'Planned Investment: '    + (amount || 'Not specified') + '\n\n' +
-      'Please activate my copy trade slot and send me the connection instructions.\n\n' +
+      (isCopyTrade ? 'I would like to register for COPY TRADING.\n\n' : 'I have a custom development request.\n\n') +
+      'Service: '              + service + '\n' +
+      'Name: '                 + name    + '\n' +
+      'Email: '                + email   + '\n' +
+      'MT5 Account Number: '   + (mt5 || 'Not provided') + '\n' +
+      'Planned Investment: '   + (amount || 'Not specified') + '\n' +
+      (notes ? 'Project Details: ' + notes + '\n' : '') + '\n' +
+      (isCopyTrade
+        ? 'Please activate my copy trade slot and send me the connection instructions.\n\n'
+        : 'Please send me a quote and next steps for my project.\n\n') +
       'Thank you!';
     return 'mailto:' + TARGET_EMAIL +
            '?subject=' + encodeURIComponent(subject) +
@@ -764,24 +856,26 @@ tailwind.config = {
   window.handleRegister = function (e) {
     e.preventDefault();
 
+    var serviceEl = document.getElementById('regService');
     var nameEl    = document.getElementById('regName');
     var emailEl   = document.getElementById('regEmail');
     var mt5El     = document.getElementById('regMt5');
     var amountEl  = document.getElementById('regAmount');
+    var notesEl   = document.getElementById('regNotes');
     var btn       = document.getElementById('regSubmitBtn');
     var errBox    = document.getElementById('regError');
 
-    var name   = (nameEl   && nameEl.value.trim())   || '';
-    var email  = (emailEl  && emailEl.value.trim())  || '';
-    var mt5    = (mt5El    && mt5El.value.trim())    || '';
-    var amount = (amountEl && amountEl.value.trim()) || '';
+    var service = (serviceEl && serviceEl.value) || 'Copy Trade Registration';
+    var name    = (nameEl    && nameEl.value.trim())    || '';
+    var email   = (emailEl   && emailEl.value.trim())   || '';
+    var mt5     = (mt5El     && mt5El.value.trim())     || '';
+    var amount  = (amountEl  && amountEl.value.trim())  || '';
+    var notes   = (notesEl   && notesEl.value.trim())   || '';
 
-    /* set the manual fallback link with the user's details pre-filled */
     var fb = document.getElementById('regFallbackMail');
-    if (fb) fb.href = buildFallbackMailto(name, email, mt5, amount);
+    if (fb) fb.href = buildFallbackMailto(service, name, email, mt5, amount, notes);
     if (errBox) errBox.classList.add('hidden');
 
-    /* loading state */
     var originalBtn = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Sending…';
@@ -790,32 +884,31 @@ tailwind.config = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
-        _subject:       'Copy Trade Registration - Vaan.One',
+        _subject:       (service === 'Copy Trade Registration' ? 'Copy Trade Registration - Vaan.One' : 'Custom Development Inquiry - Vaan.One') + ' [' + service + ']',
         _template:      'table',
         _captcha:       'false',
-        _autoresponse:  'Thank you for registering for Vaan.One Copy Trading! We will email your connection instructions and activate your copy slot shortly. Profit sharing starts from 50:50 and applies only when your profit reaches a minimum of 10%. — Vaan.One Team',
+        _autoresponse:  'Thank you for contacting Vaan.One! For copy trade: profit sharing starts from 50:50 and applies only when your profit reaches a minimum of 10%. We will reply with next steps shortly. — Vaan.One Team',
+        'Service':                service,
         'Name':                   name,
         'Email':                  email,
-        'MT5 Account Number':     mt5,
-        'Planned Investment':     amount || 'Not specified'
+        'MT5 Account Number':     mt5 || 'Not provided',
+        'Planned Investment':     amount || 'Not specified',
+        'Project Details':        notes || '—'
       })
     })
     .then(function (res) { return res.json(); })
     .then(function (data) {
       if (data && (data.success === 'true' || data.success === true)) {
-        /* success — show confirmation view */
         var fw = document.getElementById('registerFormWrap'); if (fw) fw.classList.add('hidden');
         var sc = document.getElementById('registerSuccess');  if (sc) sc.classList.remove('hidden');
       } else {
-        throw new Error('FormSubmit rejected: ' + (data && data.message ? data.message : 'unknown'));
+        throw new Error('FormSubmit rejected');
       }
     })
     .catch(function () {
-      /* network/service failure — show manual fallback */
       if (errBox) errBox.classList.remove('hidden');
     })
     .then(function () {
-      /* restore button in all cases */
       btn.disabled = false;
       btn.innerHTML = originalBtn;
     });
